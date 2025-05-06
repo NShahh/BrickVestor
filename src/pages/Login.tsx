@@ -34,7 +34,7 @@ const Login = () => {
       await login(email, password);
       toast({
         title: "Login successful!",
-        description: "Welcome back to PropFolio.",
+        description: "Welcome back to BrickVestor.",
       });
       navigate(from);
     } catch (error) {
