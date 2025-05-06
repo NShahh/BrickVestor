@@ -53,4 +53,11 @@ const App = () => (
   </QueryClientProvider>
 );
 
+<footer className="w-full text-center text-gray-500 py-4 text-sm">
+  Made by <span className="text-blue-600 font-medium">Naman</span> —
+  <a href="https://www.linkedin.com/in/YOUR-LINKEDIN-ID" target="_blank" rel="noopener noreferrer" className="ml-1 underline text-blue-500">
+    Connect on LinkedIn
+  </a>
+</footer>
+
 export default App;
