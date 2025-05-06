@@ -22,7 +22,7 @@ const Index = () => {
             </h1>
             <p className="text-xl text-gray-600 max-w-[800px]">
               Own a piece of high-value properties with minimal investment. Get
-              started with PropFolio today.
+              started with BrickVestor today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
               <Link to="/explore">
