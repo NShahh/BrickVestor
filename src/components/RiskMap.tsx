@@ -92,11 +92,16 @@ const RiskMap = () => {
         const propertiesInCity = mockProperties.filter(p => p.location === city);
         
         // Create HTML content for popup with conditional rendering of appreciation
+        // Using 'in' operator to safely check if the property exists before accessing it
+        const appreciationText = 'appreciation' in riskData && riskData.appreciation 
+          ? `<p>Appreciation: ${riskData.appreciation}</p>` 
+          : '';
+        
         const popupHTML = `
           <h3 style="font-weight: bold; margin-bottom: 8px;">${city}</h3>
           <p>Risk Level: <span style="color: ${color}; font-weight: bold;">${riskData.risk}</span></p>
           <p>Properties: ${propertiesInCity.length}</p>
-          ${riskData.appreciation ? `<p>Appreciation: ${riskData.appreciation}</p>` : ''}
+          ${appreciationText}
         `;
         
         // Add the marker to the map
