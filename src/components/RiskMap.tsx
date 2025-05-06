@@ -91,16 +91,19 @@ const RiskMap = () => {
         // Count properties in this city
         const propertiesInCity = mockProperties.filter(p => p.location === city);
         
+        // Create HTML content for popup with conditional rendering of appreciation
+        const popupHTML = `
+          <h3 style="font-weight: bold; margin-bottom: 8px;">${city}</h3>
+          <p>Risk Level: <span style="color: ${color}; font-weight: bold;">${riskData.risk}</span></p>
+          <p>Properties: ${propertiesInCity.length}</p>
+          ${riskData.appreciation ? `<p>Appreciation: ${riskData.appreciation}</p>` : ''}
+        `;
+        
         // Add the marker to the map
         new mapboxgl.Marker(el)
           .setLngLat(coordinates)
           .setPopup(new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <h3 style="font-weight: bold; margin-bottom: 8px;">${city}</h3>
-              <p>Risk Level: <span style="color: ${color}; font-weight: bold;">${riskData.risk}</span></p>
-              <p>Properties: ${propertiesInCity.length}</p>
-              ${riskData.appreciation ? `<p>Appreciation: ${riskData.appreciation}</p>` : ''}
-            `)
+            .setHTML(popupHTML)
           )
           .addTo(map.current!);
       });
