@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
 import Portfolio from "./pages/Portfolio";
+import GroupPortfolio from "./pages/GroupPortfolio";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PropertyDetail from "./pages/PropertyDetail";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/group-portfolio" element={<GroupPortfolio />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/property/:id" element={<PropertyDetail />} />

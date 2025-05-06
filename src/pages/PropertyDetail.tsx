@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { mockProperties, formatCurrency } from "@/lib/mock-data";
+import { mockProperties, formatCurrency, investInProperty } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,12 +26,21 @@ import { Progress } from "@/components/ui/progress";
 import RentalYieldCalculator from "@/components/RentalYieldCalculator";
 import GroupInvestment from "@/components/GroupInvestment";
 import RiskHeatmap from "@/components/RiskHeatmap";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
   
   const property = mockProperties.find((p) => p.id === id);
+  const [investmentAmount, setInvestmentAmount] = useState<string>("");
+  const [isInvestDialogOpen, setIsInvestDialogOpen] = useState<boolean>(false);
+  const [isInvesting, setIsInvesting] = useState<boolean>(false);
 
   if (!property) {
     return (
@@ -55,6 +64,64 @@ const PropertyDetail = () => {
 
   const availabilityPercentage =
     (property.availableFractions / property.totalFractions) * 100;
+  
+  const shareAvailabilityPercentage =
+    property.totalShares && property.availableShares
+      ? (property.availableShares / property.totalShares) * 100
+      : 0;
+  
+  const handleInvestClick = () => {
+    if (!user) {
+      navigate("/login", { state: { from: `/property/${id}` } });
+      return;
+    }
+    
+    setIsInvestDialogOpen(true);
+  };
+  
+  const handleInvestSubmit = () => {
+    if (!investmentAmount || !property) return;
+    
+    const amount = parseFloat(investmentAmount);
+    
+    if (isNaN(amount) || amount <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid investment amount",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsInvesting(true);
+    
+    setTimeout(() => {
+      const result = investInProperty(property.id, amount);
+      
+      if (result.success) {
+        toast({
+          title: "Investment successful",
+          description: result.message
+        });
+        
+        // Update local property state to reflect new available shares
+        if (result.newAvailableShares !== undefined && property) {
+          property.availableShares = result.newAvailableShares;
+        }
+        
+        setIsInvestDialogOpen(false);
+        setInvestmentAmount("");
+      } else {
+        toast({
+          title: "Investment failed",
+          description: result.message,
+          variant: "destructive"
+        });
+      }
+      
+      setIsInvesting(false);
+    }, 1000); // Simulate network request
+  };
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
@@ -175,6 +242,17 @@ const PropertyDetail = () => {
                     </div>
                   ))}
                 </div>
+                
+                {/* Developer Info */}
+                {property.developer && (
+                  <>
+                    <h2 className="text-xl font-semibold mb-4 mt-8">Developer</h2>
+                    <div className="p-4 bg-slate-50 rounded-lg mb-6">
+                      <p className="font-medium">{property.developer}</p>
+                      <p className="text-sm text-gray-600 mt-1">Established Developer</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -213,13 +291,24 @@ const PropertyDetail = () => {
                       {property.annualYield}%
                     </span>
                   </div>
+                  
+                  {property.sharePrice && (
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">
+                        Share Price
+                      </span>
+                      <span className="text-sm font-semibold">
+                        {formatCurrency(property.sharePrice)}
+                      </span>
+                    </div>
+                  )}
 
                   <Separator className="my-4" />
 
                   <div className="mb-2">
                     <div className="flex justify-between mb-2">
                       <span className="text-sm font-medium">
-                        Availability
+                        Fractional Availability
                       </span>
                       <span className="text-sm">
                         {property.availableFractions} of {property.totalFractions}{" "}
@@ -228,6 +317,21 @@ const PropertyDetail = () => {
                     </div>
                     <Progress value={availabilityPercentage} className="h-2" />
                   </div>
+                  
+                  {property.sharePrice && property.totalShares && property.availableShares && (
+                    <div className="mb-2 mt-4">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Share Availability
+                        </span>
+                        <span className="text-sm">
+                          {property.availableShares} of {property.totalShares}{" "}
+                          shares left
+                        </span>
+                      </div>
+                      <Progress value={shareAvailabilityPercentage} className="h-2" />
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-4 bg-green-50 rounded-lg">
@@ -276,6 +380,7 @@ const PropertyDetail = () => {
                     property.status === "Sold Out" ||
                     property.availableFractions === 0
                   }
+                  onClick={handleInvestClick}
                 >
                   {property.status === "Available" &&
                   property.availableFractions > 0
@@ -291,6 +396,48 @@ const PropertyDetail = () => {
           </div>
         </div>
       </div>
+      
+      {/* Investment Dialog */}
+      <Dialog open={isInvestDialogOpen} onOpenChange={setIsInvestDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Invest in {property.name}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border p-3 rounded-md">
+                <p className="text-sm text-gray-500">Share Price</p>
+                <p className="font-semibold">{formatCurrency(property.sharePrice || property.pricePerFraction)}</p>
+              </div>
+              <div className="border p-3 rounded-md">
+                <p className="text-sm text-gray-500">Available Shares</p>
+                <p className="font-semibold">{property.availableShares || property.availableFractions}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Investment Amount (₹)</p>
+              <Input
+                type="number"
+                placeholder="Enter amount"
+                value={investmentAmount}
+                onChange={(e) => setInvestmentAmount(e.target.value)}
+              />
+              
+              {investmentAmount && (
+                <p className="text-sm mt-2">
+                  Buying approximately {Math.floor(parseFloat(investmentAmount) / (property.sharePrice || property.pricePerFraction))} shares
+                </p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInvestDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleInvestSubmit} disabled={isInvesting}>
+              {isInvesting ? "Processing..." : "Invest Now"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

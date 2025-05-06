@@ -16,6 +16,11 @@ export interface Property {
   propertyType: 'Residential' | 'Commercial' | 'Mixed Use';
   premium?: boolean;
   tags?: string[];
+  fullPrice?: number; // Total property price
+  sharePrice?: number; // Price per share
+  totalShares?: number; // Total number of shares
+  availableShares?: number; // Available number of shares
+  developer?: string; // Property developer
 }
 
 export interface PortfolioItem {
@@ -24,6 +29,24 @@ export interface PortfolioItem {
   fractionsOwned: number;
   purchaseDate: string;
   currentValue: number;
+  sharesOwned?: number; // Number of shares owned
+}
+
+export interface GroupPortfolio {
+  id: string;
+  name: string;
+  code: string;
+  members: {
+    id: string;
+    name: string;
+    email: string;
+  }[];
+  investments: {
+    propertyId: string;
+    totalInvestment: number;
+    totalShares: number;
+    purchaseDate: string;
+  }[];
 }
 
 export const mockProperties: Property[] = [
@@ -42,7 +65,12 @@ export const mockProperties: Property[] = [
     area: 1200,
     amenities: ['Swimming Pool', 'Gym', 'Security', '24/7 Power Backup'],
     rentalIncome: 25000,
-    propertyType: 'Residential'
+    propertyType: 'Residential',
+    fullPrice: 100000000, // 10 Crore
+    sharePrice: 10000,
+    totalShares: 10000,
+    availableShares: 9750,
+    developer: 'Lodha Group'
   },
   {
     id: '2',
@@ -59,7 +87,12 @@ export const mockProperties: Property[] = [
     area: 3500,
     amenities: ['Conference Rooms', 'High-speed Internet', 'Cafeteria', 'Parking'],
     rentalIncome: 45000,
-    propertyType: 'Commercial'
+    propertyType: 'Commercial',
+    fullPrice: 180000000, // 18 Crore
+    sharePrice: 12000,
+    totalShares: 15000,
+    availableShares: 14200,
+    developer: 'Brigade Group'
   },
   {
     id: '3',
@@ -76,7 +109,12 @@ export const mockProperties: Property[] = [
     area: 2800,
     amenities: ['Garden', 'Club House', 'Children\'s Play Area', 'Jogging Track'],
     rentalIncome: 35000,
-    propertyType: 'Residential'
+    propertyType: 'Residential',
+    fullPrice: 85000000, // 8.5 Crore
+    sharePrice: 8500,
+    totalShares: 10000,
+    availableShares: 0,
+    developer: 'Godrej Properties'
   },
   {
     id: '4',
@@ -216,21 +254,89 @@ export const userPortfolio: PortfolioItem[] = [
     investmentAmount: 100000,
     fractionsOwned: 4,
     purchaseDate: '2023-06-15',
-    currentValue: 110000
+    currentValue: 110000,
+    sharesOwned: 10
   },
   {
     propertyId: '3',
     investmentAmount: 200000,
     fractionsOwned: 5,
     purchaseDate: '2023-02-10',
-    currentValue: 230000
+    currentValue: 230000,
+    sharesOwned: 24
   },
   {
     propertyId: '4',
     investmentAmount: 150000,
     fractionsOwned: 3,
     purchaseDate: '2023-09-22',
-    currentValue: 165000
+    currentValue: 165000,
+    sharesOwned: 15
+  }
+];
+
+// Mock group portfolios
+export const mockGroupPortfolios: GroupPortfolio[] = [
+  {
+    id: 'group1',
+    name: 'Mumbai Investors Club',
+    code: 'MIC2023',
+    members: [
+      {
+        id: 'user1',
+        name: 'Rahul Sharma',
+        email: 'rahul@example.com'
+      },
+      {
+        id: 'user2',
+        name: 'Priya Patel',
+        email: 'priya@example.com'
+      },
+      {
+        id: 'user3',
+        name: 'Amit Singh',
+        email: 'amit@example.com'
+      }
+    ],
+    investments: [
+      {
+        propertyId: '1',
+        totalInvestment: 300000,
+        totalShares: 30,
+        purchaseDate: '2023-07-15'
+      },
+      {
+        propertyId: '6',
+        totalInvestment: 480000,
+        totalShares: 4,
+        purchaseDate: '2023-08-22'
+      }
+    ]
+  },
+  {
+    id: 'group2',
+    name: 'Bangalore Tech Investors',
+    code: 'BTI2023',
+    members: [
+      {
+        id: 'user2',
+        name: 'Priya Patel',
+        email: 'priya@example.com'
+      },
+      {
+        id: 'user4',
+        name: 'Raj Kumar',
+        email: 'raj@example.com'
+      }
+    ],
+    investments: [
+      {
+        propertyId: '2',
+        totalInvestment: 420000,
+        totalShares: 35,
+        purchaseDate: '2023-09-10'
+      }
+    ]
   }
 ];
 
@@ -269,4 +375,104 @@ export const calculateProjectedReturns = (): number => {
 // New helper function to get premium properties
 export const getPremiumProperties = (): Property[] => {
   return mockProperties.filter(property => property.premium);
+};
+
+// New helper function to get group portfolio details
+export const getGroupPortfolioDetails = (groupId: string): (GroupPortfolio & { investments: (GroupPortfolio['investments'][0] & { property: Property })[]} | null) => {
+  const group = mockGroupPortfolios.find(g => g.id === groupId || g.code === groupId);
+  
+  if (!group) return null;
+  
+  const detailedInvestments = group.investments.map(inv => {
+    const property = mockProperties.find(p => p.id === inv.propertyId)!;
+    return {
+      ...inv,
+      property
+    };
+  });
+  
+  return {
+    ...group,
+    investments: detailedInvestments
+  };
+};
+
+// Function to invest in a property and update available shares
+export const investInProperty = (
+  propertyId: string, 
+  amount: number,
+  userId: string = 'user1',
+  groupId?: string
+): { success: boolean; message: string; sharesAcquired?: number; newAvailableShares?: number } => {
+  const property = mockProperties.find(p => p.id === propertyId);
+  
+  if (!property) {
+    return { success: false, message: "Property not found" };
+  }
+  
+  if (!property.sharePrice || !property.availableShares) {
+    return { success: false, message: "Property not configured for share investment" };
+  }
+  
+  if (amount < property.sharePrice) {
+    return { success: false, message: `Minimum investment must be at least ${formatCurrency(property.sharePrice)}` };
+  }
+  
+  const sharesToAcquire = Math.floor(amount / property.sharePrice);
+  
+  if (sharesToAcquire <= 0) {
+    return { success: false, message: "Invalid investment amount" };
+  }
+  
+  if (sharesToAcquire > property.availableShares) {
+    return { success: false, message: `Only ${property.availableShares} shares available` };
+  }
+  
+  // Update available shares
+  property.availableShares -= sharesToAcquire;
+  
+  // Add to user portfolio
+  if (!groupId) {
+    const existingItem = userPortfolio.find(item => item.propertyId === propertyId);
+    
+    if (existingItem) {
+      existingItem.investmentAmount += amount;
+      existingItem.sharesOwned = (existingItem.sharesOwned || 0) + sharesToAcquire;
+      existingItem.currentValue = existingItem.investmentAmount * 1.05; // Mock 5% appreciation
+    } else {
+      userPortfolio.push({
+        propertyId: property.id,
+        investmentAmount: amount,
+        fractionsOwned: Math.ceil(amount / property.pricePerFraction),
+        purchaseDate: new Date().toISOString().split('T')[0],
+        currentValue: amount * 1.02, // Mock 2% initial appreciation
+        sharesOwned: sharesToAcquire
+      });
+    }
+  } else {
+    // Add to group portfolio
+    const group = mockGroupPortfolios.find(g => g.id === groupId);
+    if (group) {
+      const existingInvestment = group.investments.find(i => i.propertyId === propertyId);
+      
+      if (existingInvestment) {
+        existingInvestment.totalInvestment += amount;
+        existingInvestment.totalShares += sharesToAcquire;
+      } else {
+        group.investments.push({
+          propertyId: property.id,
+          totalInvestment: amount,
+          totalShares: sharesToAcquire,
+          purchaseDate: new Date().toISOString().split('T')[0]
+        });
+      }
+    }
+  }
+  
+  return { 
+    success: true, 
+    message: `Successfully invested ${formatCurrency(amount)} and acquired ${sharesToAcquire} shares`, 
+    sharesAcquired: sharesToAcquire,
+    newAvailableShares: property.availableShares
+  };
 };

@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, User, LogOut, Home, Building, BarChart3 } from "lucide-react";
+import { Menu, X, User, LogOut, Home, Building, BarChart3, Calculator } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import RentalYieldCalculator from "./RentalYieldCalculator";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -58,6 +59,11 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Rental Yield Calculator in Navbar */}
+              <div className="h-16 flex items-center">
+                <RentalYieldCalculator />
+              </div>
             </div>
           </div>
 
@@ -140,6 +146,11 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
+          
+          {/* Mobile Rental Yield Calculator */}
+          <div className="pl-3 pr-4 py-2">
+            <RentalYieldCalculator />
+          </div>
         </div>
         <div className="pt-4 pb-3 border-t border-gray-200">
           {user ? (

@@ -1,22 +1,27 @@
 
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   getUserPortfolioWithDetails, 
   calculateTotalInvestment, 
   calculateCurrentValue,
   calculateProjectedReturns, 
-  formatCurrency 
+  formatCurrency,
+  investInProperty 
 } from "@/lib/mock-data";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import PropertyCard from "@/components/PropertyCard";
 import StatCard from "@/components/StatCard";
-import { TrendingUp, DollarSign, Wallet } from "lucide-react";
+import { TrendingUp, DollarSign, Wallet, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 
 const Portfolio = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const portfolioItems = getUserPortfolioWithDetails();
   
   // Redirect if not logged in
@@ -36,13 +41,40 @@ const Portfolio = () => {
   
   const portfolioGrowth = ((currentValue - totalInvestment) / totalInvestment) * 100;
 
+  const handleInvest = (propertyId: string, amount: number) => {
+    const result = investInProperty(propertyId, amount);
+    
+    if (result.success) {
+      toast({
+        title: "Investment successful",
+        description: result.message
+      });
+    } else {
+      toast({
+        title: "Investment failed",
+        description: result.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container px-4 py-8 mx-auto">
         <h1 className="text-3xl font-bold mb-2">My Portfolio</h1>
-        <p className="text-gray-500 mb-8">
+        <p className="text-gray-500 mb-4">
           Track and manage your property investments
         </p>
+
+        <div className="flex justify-between items-center mb-8">
+          <div></div> {/* Empty div for flexbox spacing */}
+          <Link to="/group-portfolio">
+            <Button variant="outline" className="gap-2">
+              <Users className="h-4 w-4" />
+              View Group Portfolio
+            </Button>
+          </Link>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
@@ -101,8 +133,8 @@ const Portfolio = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Fractions Owned</p>
-                          <p className="font-semibold">{item.fractionsOwned}</p>
+                          <p className="text-xs text-gray-500">{item.sharesOwned ? "Shares Owned" : "Fractions Owned"}</p>
+                          <p className="font-semibold">{item.sharesOwned || item.fractionsOwned}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-500">Current Value</p>
