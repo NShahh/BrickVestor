@@ -18,10 +18,14 @@ import {
   ArrowLeft,
   Home,
   DollarSign,
+  AlertTriangle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import RentalYieldCalculator from "@/components/RentalYieldCalculator";
+import GroupInvestment from "@/components/GroupInvestment";
+import RiskHeatmap from "@/components/RiskHeatmap";
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,12 +71,30 @@ const PropertyDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
             <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
-              <div className="h-64 md:h-96 bg-muted">
+              <div className="h-64 md:h-96 bg-muted relative">
                 <img
                   src={property.image}
                   alt={property.name}
                   className="w-full h-full object-cover"
                 />
+                
+                {/* Premium tag if applicable */}
+                {property.premium && (
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-gold-500 hover:bg-gold-600 text-white">Premium</Badge>
+                  </div>
+                )}
+                
+                {/* Property tags if available */}
+                {property.tags && property.tags.length > 0 && (
+                  <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                    {property.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="bg-white/80 backdrop-blur-sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="p-6">
@@ -130,6 +152,15 @@ const PropertyDetail = () => {
                     <p className="font-medium">
                       {formatCurrency(property.rentalIncome)}/mo
                     </p>
+                  </div>
+                </div>
+                
+                {/* Advanced Features section */}
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Investment Tools</h2>
+                  <div className="flex flex-wrap gap-3">
+                    <RentalYieldCalculator selectedPropertyId={property.id} />
+                    <RiskHeatmap />
                   </div>
                 </div>
 
@@ -217,8 +248,28 @@ const PropertyDetail = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Risk assessment */}
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <div className="flex items-start">
+                    <AlertTriangle className="h-5 w-5 mr-2 text-amber-500 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Risk Assessment</h4>
+                      <div className="flex items-center mt-1">
+                        <div className={`h-2 w-2 rounded-full ${
+                          property.location === "Mumbai" || property.location === "Bangalore" ? "bg-green-500" : 
+                          property.location === "Pune" || property.location === "Kolkata" ? "bg-yellow-500" : "bg-red-500"
+                        } mr-2`}></div>
+                        <p className="text-sm">
+                          {property.location === "Mumbai" || property.location === "Bangalore" ? "Low Risk" : 
+                           property.location === "Pune" || property.location === "Kolkata" ? "Medium Risk" : "High Risk"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex-col space-y-3">
                 <Button
                   className="w-full"
                   disabled={
@@ -231,6 +282,10 @@ const PropertyDetail = () => {
                     ? "Invest Now"
                     : "Sold Out"}
                 </Button>
+                
+                {property.status === "Available" && (
+                  <GroupInvestment property={property} />
+                )}
               </CardFooter>
             </Card>
           </div>

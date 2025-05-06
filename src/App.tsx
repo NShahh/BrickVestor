@@ -18,7 +18,15 @@ import NotFound from "./pages/NotFound";
 // Components
 import Navbar from "./components/Navbar";
 
-const queryClient = new QueryClient();
+// Initialize Query Client with default options
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
