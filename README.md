@@ -1,73 +1,61 @@
-# Welcome to your Lovable project
+# 🏠 BrickVestor - Fractional Real Estate Investment App
 
-## Project info
+**URL**: [View Live Project](https://brickvestor.lovable.app/)
 
-**URL**: https://lovable.dev/projects/03cbe94a-8922-44e9-970d-649fb5baa873
+---
 
-## How can I edit this code?
+## 🚀 Project Story
 
-There are several ways of editing your application.
+### 📌 Inspiration
 
-**Use Lovable**
+Real estate has always been a symbol of stability and long-term wealth. But for most people, especially the younger crowd, it's a distant dream — too expensive, too complicated.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/03cbe94a-8922-44e9-970d-649fb5baa873) and start prompting.
+The spark came from how fintech is transforming everything — from stocks to crypto — with fractional ownership and collaborative investing. So I thought, why not bring the same innovation to real estate?
 
-Changes made via Lovable will be committed automatically to this repo.
+This app helps people co-own premium real estate properties in small, affordable fractions — making property investment simple, modern, and accessible to all.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🎯 What I Learned
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- How to blend fintech thinking with real estate concepts.
+- Importance of intuitive, user-first design.
+- Deep dive into Lovable.dev, responsive UI, dynamic data handling.
+- Building complex flows like group investing, investment tracking, and real-time share allocation.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ How I Built the Project
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. **Platform**: Built using [Lovable.dev](https://lovable.dev) in just 5 prompts — super fast, no backend stress.
+2. **Investment Logic**: Added mock premium properties with filters and an Instant Rental Yield Calculator.
+3. **Group Investing**: Users can create groups, pool money with friends, and invest together.
+4. **Risk Heatmap**: Color-coded map to show low/medium/high risk zones for smarter decision-making.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## ⚠️ Challenges Faced
 
-**Edit a file directly in GitHub**
+1. **Real-Time Data**: Simulating realistic returns and property risks was tough without real APIs.
+2. **UX Design**: Making the platform simple yet powerful for all users — beginners to seasoned investors.
+3. **Group Logic**: Managing shared portfolios and fractional calculations without confusing the user.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## ✅ Features
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- 🔢 Fractional share investment (₹10,000/share logic).
+- 📍 Risk Heatmap to assess property risk visually.
+- 👥 Co-Invest with Friends — group creation, group code join, shared dashboards.
+- 📈 Instant Rental Yield Calculator — now pinned in the nav for easy access.
+- 📊 Personal & Group Portfolios — track your solo and joint investments separately.
+- 🧮 Real-time share allocation logic — as you invest, shares are credited, and availability updated.
 
-## What technologies are used for this project?
-
-This project is built with:
+---
+## 🧱 Tech Stack
 
 - Vite
-- TypeScript
-- React
-- shadcn-ui
+- React + TypeScript
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/03cbe94a-8922-44e9-970d-649fb5baa873) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- shadcn-ui
+- Lovable.dev for AI-powered frontend development
