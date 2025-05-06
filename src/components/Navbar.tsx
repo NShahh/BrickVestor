@@ -38,7 +38,7 @@ const Navbar = () => {
               className="flex-shrink-0 flex items-center"
               onClick={closeMenu}
             >
-              <span className="text-xl font-bold text-real-600">PropFolio</span>
+              <span className="text-xl font-bold text-real-600">BrickVestor</span>
             </Link>
           </div>
 
