@@ -49,7 +49,7 @@ const Signup = () => {
       await signup(email, name, password);
       toast({
         title: "Account created!",
-        description: "Welcome to PropFolio. You can now explore properties and start investing.",
+        description: "Welcome to BrickVestor. You can now explore properties and start investing.",
       });
       navigate("/explore");
     } catch (error) {
