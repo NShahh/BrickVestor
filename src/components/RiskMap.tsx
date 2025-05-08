@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { cityRiskLevels } from "./RiskHeatmap";
@@ -63,12 +63,10 @@ const createCustomIcon = (color: string) => {
   });
 };
 
-const RiskMap = () => {
-  // Call once to fix icon issues
-  React.useEffect(() => {
-    fixLeafletIcon();
-  }, []);
+// Initialize Leaflet icons before rendering
+fixLeafletIcon();
 
+const RiskMap: React.FC = () => {
   return (
     <div className="h-[500px] w-full rounded-lg overflow-hidden shadow-lg bg-slate-100 relative">
       <MapContainer 
