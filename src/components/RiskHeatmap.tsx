@@ -1,14 +1,13 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockProperties } from "@/lib/mock-data";
 import { AlertTriangle } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import RiskMap from "./RiskMap";
+import { TabsContent } from "@/components/ui/tabs";
 
-// Define risk levels for each city - exported for reuse in RiskMap component
+// Define risk levels for each city - exported for reuse
 export const cityRiskLevels: Record<string, {
   risk: "Low" | "Medium" | "High";
   appreciation: string;
@@ -44,7 +43,6 @@ const getRiskColor = (risk: "Low" | "Medium" | "High") => {
 const RiskHeatmap: React.FC = () => {
   // Get unique locations from properties
   const locations = Array.from(new Set(mockProperties.map((property) => property.location)));
-  const [activeTab, setActiveTab] = useState<"table" | "map">("table");
   
   return (
     <Dialog>
@@ -59,83 +57,72 @@ const RiskHeatmap: React.FC = () => {
           <DialogTitle>Property Risk Heatmap</DialogTitle>
         </DialogHeader>
         
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "table" | "map")} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="table">Table View</TabsTrigger>
-            <TabsTrigger value="map">Map View</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="table" className="pt-4 pb-2">
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-sm text-slate-500">
-                Risk assessment based on location, market trends, and historical data
-              </p>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-1">
-                  <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                  <span className="text-xs">Low Risk</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-                  <span className="text-xs">Medium Risk</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="h-3 w-3 rounded-full bg-red-500"></div>
-                  <span className="text-xs">High Risk</span>
-                </div>
+        <div className="pt-4 pb-2">
+          <div className="flex justify-between items-center mb-4">
+            <p className="text-sm text-slate-500">
+              Risk assessment based on location, market trends, and historical data
+            </p>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-1">
+                <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                <span className="text-xs">Low Risk</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+                <span className="text-xs">Medium Risk</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                <span className="text-xs">High Risk</span>
               </div>
             </div>
-            
-            <div className="overflow-y-auto max-h-[400px]">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Risk Level</TableHead>
-                    <TableHead>City Tier</TableHead>
-                    <TableHead>Appreciation Rate</TableHead>
-                    <TableHead>Properties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {locations.map((location) => {
-                    const riskData = cityRiskLevels[location] || {
-                      risk: "Medium",
-                      appreciation: "Unknown",
-                      tier: "2",
-                    };
-                    
-                    const propertiesInLocation = mockProperties.filter(
-                      (p) => p.location === location
-                    );
-                    
-                    return (
-                      <TableRow key={location}>
-                        <TableCell className="font-medium">{location}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskColor(
-                              riskData.risk
-                            )}`}
-                          >
-                            {riskData.risk}
-                          </span>
-                        </TableCell>
-                        <TableCell>Tier {riskData.tier}</TableCell>
-                        <TableCell>{riskData.appreciation}</TableCell>
-                        <TableCell>{propertiesInLocation.length}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </TabsContent>
+          </div>
           
-          <TabsContent value="map" className="py-4">
-            <RiskMap />
-          </TabsContent>
-        </Tabs>
+          <div className="overflow-y-auto max-h-[400px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Risk Level</TableHead>
+                  <TableHead>City Tier</TableHead>
+                  <TableHead>Appreciation Rate</TableHead>
+                  <TableHead>Properties</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {locations.map((location) => {
+                  const riskData = cityRiskLevels[location] || {
+                    risk: "Medium",
+                    appreciation: "Unknown",
+                    tier: "2",
+                  };
+                  
+                  const propertiesInLocation = mockProperties.filter(
+                    (p) => p.location === location
+                  );
+                  
+                  return (
+                    <TableRow key={location}>
+                      <TableCell className="font-medium">{location}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskColor(
+                            riskData.risk
+                          )}`}
+                        >
+                          {riskData.risk}
+                        </span>
+                      </TableCell>
+                      <TableCell>Tier {riskData.tier}</TableCell>
+                      <TableCell>{riskData.appreciation}</TableCell>
+                      <TableCell>{propertiesInLocation.length}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
