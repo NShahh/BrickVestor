@@ -1,5 +1,5 @@
 import React from "react";
-import { Linkedin } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
 const Footer = () => {
@@ -18,7 +18,7 @@ const Footer = () => {
             )}
             aria-label="LinkedIn"
           >
-            <Linkedin className="h-5 w-5 text-real-600" />
+            <FaLinkedin className="h-5 w-5 text-blue-600" />
           </a>
         </div>
       </div>
