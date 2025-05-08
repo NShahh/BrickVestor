@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { cityRiskLevels } from "./RiskHeatmap";
@@ -84,7 +84,7 @@ const RiskMap = () => {
         
         {/* Add markers for each city with properties */}
         {Object.entries(cityCordinates).map(([city, coordinates]) => {
-          const riskData = cityRiskLevels[city] || { risk: "Medium" };
+          const riskData = cityRiskLevels[city] || { risk: "Medium" as const };
           const color = getRiskColor(riskData.risk);
           const propertiesInCity = mockProperties.filter(p => p.location === city);
           
@@ -99,7 +99,7 @@ const RiskMap = () => {
                   <h3 className="font-bold mb-1">{city}</h3>
                   <p className="text-sm">Risk Level: <span className="font-bold" style={{ color }}>{riskData.risk}</span></p>
                   <p className="text-sm">Properties: {propertiesInCity.length}</p>
-                  {riskData.appreciation && <p className="text-sm">Appreciation: {riskData.appreciation}</p>}
+                  {'appreciation' in riskData && <p className="text-sm">Appreciation: {riskData.appreciation}</p>}
                 </div>
               </Popup>
             </Marker>
