@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +17,7 @@ import NotFound from "./pages/NotFound";
 
 // Components
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 // Initialize Query Client with default options
 const queryClient = new QueryClient({
@@ -36,17 +36,22 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/group-portfolio" element={<GroupPortfolio />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/property/:id" element={<PropertyDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <div className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/group-portfolio" element={<GroupPortfolio />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/property/:id" element={<PropertyDetail />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+            <Footer />
+          </div>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
@@ -54,3 +59,4 @@ const App = () => (
 );
 
 export default App;
+
