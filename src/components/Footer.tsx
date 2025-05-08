@@ -1,5 +1,4 @@
 import React from "react";
-import { FaLinkedin } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
 const Footer = () => {
@@ -18,7 +17,11 @@ const Footer = () => {
             )}
             aria-label="LinkedIn"
           >
-            <FaLinkedin className="h-5 w-5 text-blue-600" />
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/174/174857.png" 
+              alt="LinkedIn logo" 
+              className="h-5 w-5"
+            />
           </a>
         </div>
       </div>
