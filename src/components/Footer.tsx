@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="bg-white border-t border-gray-200 py-4 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center">
-          <p className="text-sm text-gray-500">Made by Naman</p>
+          <p className="text-sm text-gray-500">Designed and Developed by Naman.</p>
           <a 
             href="https://www.linkedin.com/in/namandedhia" 
             target="_blank" 
